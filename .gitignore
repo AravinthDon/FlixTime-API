@@ -1,2 +1,5 @@
 #Ignore the log files
 **/log
+
+#Ignore the csv file for now
+*.csv
