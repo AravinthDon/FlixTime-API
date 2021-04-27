@@ -35,15 +35,18 @@
         }
     }
 
+    echo "Uploading data...";
    // Iterate through the data to upload
     foreach($csv as $row) {
-        if(empty($row('title'))) {
+        if(empty($row['title'])) {
             continue; // skip this movie and move to the next
         } else {
             include_once('show.php');
             add_show($conn,$row);
         }
     }
+
+    echo "Success";
 
     //echo("Length: ". count($csv)."\n");
     //print_r($csv);
