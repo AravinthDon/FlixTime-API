@@ -58,29 +58,27 @@
     // Get the movie title from the url
     if(isset($_GET['keyword'])) {
         $search_title = $_GET['keyword'];
+
+        // fetch the title for the movies and the tv shows
+        $MOVIE_FETCH_QUERY = "SELECT * FROM FT_Movie";
+        $TVSHOW_FETCH_QUERY = "SELECT * FROM FT_TvShow";
+
+        // get the movies
+        $movies = select_query($conn, $MOVIE_FETCH_QUERY);
+        // search for the movie
+        $movie_results = search_show($movies, $search_title, "Movie");
+        array_push($results, array("Movies" => NULL));
+
+        // get the tv shows
+        $tvshows = select_query($conn, $TVSHOW_FETCH_QUERY);
+        // search for the tv show
+        $tvshow_results = search_show($tvshows, $search_title, "TV Show");
+        array_push($results, array("TV Shows" => $tvshow_results));
+
+        echo json_encode($results);
     }
     
-    // fetch the title for the movies and the tv shows
-    $MOVIE_FETCH_QUERY = "SELECT * FROM FT_Movie";
-    $TVSHOW_FETCH_QUERY = "SELECT * FROM FT_TvShow";
-
-    $movies = select_query($conn, $MOVIE_FETCH_QUERY);
-    // search for the movie
-    $movie_results = search_show($movies, $search_title, "Movie");
-
-    if(empty($movie_results)) {
-        array_push($results, array("Movies" => NULL));
-    } else {
-        array_push($results, array("Movies" => $movie_results));
-    }
-
-    $tvshows = select_query($conn, $TVSHOW_FETCH_QUERY);
-
-    $tvshow_results = search_show($tvshows, $search_title, "TV Show");
-
-    array_push($results, array("TV Shows" => $tvshow_results));
-
-    echo json_encode($results);
+    
 
 
     
