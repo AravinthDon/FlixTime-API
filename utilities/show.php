@@ -57,6 +57,9 @@
 
     function add_show($conn, $show) {
         
+        // trim whiteshpace from the values
+        array_walk($show, 'trim_value');
+
         // Declaring variables
         $country_id = "NULL";
         $director_id = "NULL";
@@ -93,7 +96,6 @@
             $showtype_id = add_showtype($conn, $show['type']);
         }
         
-
         // Add the show with the collected id's
         $show_insert_query = "INSERT INTO FT_Show(DIRECTOR_ID, Year_Released, Date_Added, RATING_ID, COUNTRY_ID, SHOWTYPE_ID, `Description`) VALUES({$director_id}, {$release_year}, '{$date_added}', {$rating_id}, {$country_id}, {$showtype_id}, '{$description}')";
         $show_id = insert_query($conn, $show_insert_query);
@@ -103,6 +105,7 @@
             $genre_insert_query = "INSERT INTO FT_ShowGenre(SHOW_ID, GENRE_ID) VALUES({$show_id}, {$genre_id})";
             insert_query($conn, $genre_insert_query);
         }
+
         //echo "<div>$show_insert_query</div>";
         // Link show cast
         foreach($actor_ids as $actor_id) {

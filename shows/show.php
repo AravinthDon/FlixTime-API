@@ -4,8 +4,10 @@
 
     // include the database config
     include("../config/database.php");
-    
 
+    /**
+     * Gets the detailed show for the given showid
+     */
     function get_show_detailed($conn, $showid) {
         // include the db utilities file
         include("../utilities/db.php");
@@ -67,7 +69,7 @@
     // get the show details if show id is given
     if(isset($_GET['showid'])) {
         
-        $showid = mysqli_real_escape_string($conn, $_GET['showid']);
+        $showid = mysqli_real_escape_string($conn, trim($_GET['showid']));
         
         $show = get_show_detailed($conn, $showid);
 

@@ -2,6 +2,7 @@
 
     // to make the content type json
     header('Content-Type: application/json');
+    header('Access-Control-Allow-Methods: GET');
 
     // include the database config
     include("../config/database.php");
@@ -57,7 +58,7 @@
 
     // Get the movie title from the url
     if(isset($_GET['keyword'])) {
-        $search_title = $_GET['keyword'];
+        $search_title = trim($_GET['keyword']);
 
         // fetch the title for the movies and the tv shows
         $MOVIE_FETCH_QUERY = "SELECT * FROM FT_Movie";

@@ -6,6 +6,8 @@
     
     // Upload the file with the front-end app to the server
     // use file_get_contents($endpoint) to then fetch the file
+
+    // php api file upload https://www.onlyxcodes.com/2021/03/php-rest-api-file-upload.html
     $endpoint = "netflix_titles.csv";
 
     $file = file($endpoint);
@@ -34,7 +36,7 @@
             $csv[] = array_combine($header, $row);
         }
     }
-
+    
     echo "Uploading data...";
    // Iterate through the data to upload
     foreach($csv as $row) {
