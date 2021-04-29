@@ -11,6 +11,11 @@
         $value = trim($value);
     }
 
+    function real_escape_string(&$value) {
+        // include the database configuration file
+        include("../config/database.php");
+        $value = mysqli_real_escape_string($conn, $value);
+    }
 
     function insert_query($conn, $insertquery) {
         

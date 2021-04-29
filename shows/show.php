@@ -26,6 +26,7 @@
         $fetched_show = select_query($conn, $SHOW_SELECT_QUERY);
 
         if($fetched_show->num_rows > 0) {
+
             // Add the title first
             $show['Title'] = NULL;
 
@@ -59,10 +60,7 @@
                     $show['Duration'] = $movie['Movie_Duration']." min";
                 }
             }
-        } else {
-            $show['Message'] = "No Shows Found";
-        }
-
+        } 
         return $show;
     }
 
@@ -73,6 +71,9 @@
         
         $show = get_show_detailed($conn, $showid);
 
-        echo json_encode($show);
+        if(count($show) == 0) {
+            echo json_encode(array("status"=>"Error", "message" => "No Shows Found"));
+        }
+        echo json_encode(array("status" => "Success", "shows" => $show));
     }
 ?>
