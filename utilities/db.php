@@ -6,7 +6,7 @@
      * Code taken from : https://www.php.net/manual/en/function.trim.php
      * Reference it
      * */
-    // trims the first and last whitespace character
+
     function trim_value(&$value) {
         $value = trim($value);
     }
@@ -16,7 +16,7 @@
         include("../config/database.php");
         $value = mysqli_real_escape_string($conn, $value);
     }
-
+    
     function insert_query($conn, $insertquery) {
         
         if($conn->query($insertquery) === TRUE) {

@@ -23,9 +23,21 @@
         
     }
 
-    function add_country($conn, $country) {
+    function add_country($conn, $countries) {
+        // to store the country ids
+        $country_ids = array();
+
+        // separate the countries
+        $countries = explode(",", $countries);
+
+        // trim whitespace from the country names
+        array_walk($countries, 'trim_value');
+        
+        foreach($countries as $country) {
+            array_push($country_ids, add_value($conn, "FT_Country", "Country_Name", $country, 'COUNTRY_ID'));
+        }
         // call the add_value with the table, column name and the id details
-        return add_value($conn, "FT_Country", "Country_Name", $country, "COUNTRY_ID");
+        return $country_ids;
     }
 
     function add_genre($conn, $genres) {
@@ -58,26 +70,42 @@
     function add_show($conn, $show) {
         
         // trim whiteshpace from the values
-        array_walk($show, 'trim_value');
+        //array_walk($show, 'trim_value');
 
         // Declaring variables
-        $country_id = "NULL";
+        $country_ids = array();
         $director_id = "NULL";
         $rating_id = "NULL";
         $showtype_id = "NULL";
         
-        $release_year = mysqli_real_escape_string($conn, $show['release_year']);
-        $date_added = mysqli_real_escape_string($conn, $show['date_added']);
-        $description = mysqli_real_escape_string($conn, $show['description']);
+        $release_year = "NULL";
+        $date_added = "NULL";
+        $actor_ids = array();
+        $description = "NULL";
+
+        if(!empty($show['release_year'])) {
+            $release_year = mysqli_real_escape_string($conn, $show['release_year']);
+        }
+        if(!empty($show['date_added'])) {
+            $date_added = mysqli_real_escape_string($conn, $show['date_added']);
+        }
+        if(!empty($show['description'])) {
+            $description = mysqli_real_escape_string($conn, $show['description']);
+        }
+        
+        //print_r($show);
 
         // Add the Actor details if not exists
-        $actor_ids = add_actor($conn, $show['cast']);
-
+        if(!empty($show['cast'])) {
+            $actor_ids = add_actor($conn, $show['cast']);
+        }
+        
         // Add the Country details if not exists
         if (!empty($show['country'])) {
-            $country_id = add_country($conn, $show['country']);
+            $country_ids = add_country($conn, $show['country']);
         }
 
+        //echo $country_id;
         // Add the Genre if not exists
         $genre_ids = add_genre($conn, $show['listed_in']);
         
@@ -97,8 +125,14 @@
         }
         
         // Add the show with the collected id's
-        $show_insert_query = "INSERT INTO FT_Show(DIRECTOR_ID, Year_Released, Date_Added, RATING_ID, COUNTRY_ID, SHOWTYPE_ID, `Description`) VALUES({$director_id}, {$release_year}, '{$date_added}', {$rating_id}, {$country_id}, {$showtype_id}, '{$description}')";
+        $show_insert_query = "INSERT INTO FT_Show(DIRECTOR_ID, Year_Released, Date_Added, RATING_ID, SHOWTYPE_ID, `Description`) VALUES({$director_id}, {$release_year}, '{$date_added}', {$rating_id}, {$showtype_id}, '{$description}')";
         $show_id = insert_query($conn, $show_insert_query);
+
+        // Link Country Released
+        foreach($country_ids as $country_id) {
+            $country_insert_query = "INSERT INTO FT_CountryReleased(SHOW_ID, COUNTRY_ID) VALUES({$show_id}, {$country_id})";
+            insert_query($conn, $country_insert_query);
+        }
 
         // Link show genre
         foreach($genre_ids as $genre_id) {
@@ -113,7 +147,6 @@
             insert_query($conn, $cast_insert_query);
         }
 
-        
         // Check if the show is movie or tvshow
         // split the integer from string 
         // split 112 or 4 from 112 mins or 4 seasons
@@ -124,6 +157,8 @@
         } else if($show['type'] == "Movie"){
             add_movie($conn, array("name" => $show['title'], "show_id" => $show_id, "duration" => $duration[0]));
         } 
+
+        return $show_id;
     } 
 
 
