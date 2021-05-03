@@ -5,6 +5,8 @@
 
     //include("../config/database.php");
     include("db.php");
+    
+
 
     function add_actor($conn, $actors) {
          
@@ -83,6 +85,9 @@
         $actor_ids = array();
         $description = "NULL";
 
+        $poster_url = "NULL";
+        $banner_url = "NULL";
+
         if(!empty($show['release_year'])) {
             $release_year = mysqli_real_escape_string($conn, $show['release_year']);
         }
@@ -124,8 +129,16 @@
             $showtype_id = add_showtype($conn, $show['type']);
         }
         
+        /**
+         * Find the poster image and the banner image 
+         * add it to the show
+         */
+        // calling by reference
+        find_poster($show['title'], $poster_url, $banner_url);
+        
         // Add the show with the collected id's
-        $show_insert_query = "INSERT INTO FT_Show(DIRECTOR_ID, Year_Released, Date_Added, RATING_ID, SHOWTYPE_ID, `Description`) VALUES({$director_id}, {$release_year}, '{$date_added}', {$rating_id}, {$showtype_id}, '{$description}')";
+        $show_insert_query = "INSERT INTO FT_Show(DIRECTOR_ID, Year_Released, Date_Added, RATING_ID, SHOWTYPE_ID, `Description`, poster_url, banner_url) 
+        VALUES({$director_id}, {$release_year}, '{$date_added}', {$rating_id}, {$showtype_id}, '{$description}', '{$poster_url}', '{$banner_url}')";
         $show_id = insert_query($conn, $show_insert_query);
 
         // Link Country Released
@@ -157,8 +170,8 @@
         } else if($show['type'] == "Movie"){
             add_movie($conn, array("name" => $show['title'], "show_id" => $show_id, "duration" => $duration[0]));
         } 
-
-        return $show_id;
+      
+        return $show_id;    
     } 
 
 
@@ -187,4 +200,47 @@
     }
 
     //print_r(add_actor($conn, "Shah,Krish,Rakesh"));
+
+    function find_poster($title, &$poster_url, &$banner_url) {
+        include("../config/core.php");
+
+        $search_url = $TMDB_SEARCH_URL . urlencode($title);
+        
+        $search_results = file_get_contents($search_url);
+
+        $search_results = json_decode($search_results, true);
+        
+        //print_r($search_results);
+
+        $found = false;
+
+        if(count($search_results['results'])>0) {
+            
+            $shows = $search_results['results'];
+
+            foreach($shows as $show) {
+                if($show['original_title'] == $title) {
+                    // set the urls
+                    $poster_url = $TMDB_IMAGE_URL.$show['poster_path'];
+                    $banner_url = $TMDB_IMAGE_URL.$show['backdrop_path']; 
+
+                    // set found
+                    $found = true;
+
+                    // break the loop
+                    break;
+                }
+            }
+        }
+
+        // if no show is found then set the values to NULL
+        if($found == false) {
+            $poster_url = "NULL";
+            $banner_url = "NULL";
+        }
+
+    }
+
+    // testing the poster function
+    //find_poster("9", $poster_url, $banner_url);
 ?>

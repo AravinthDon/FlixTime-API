@@ -18,11 +18,11 @@
         $show = array();
 
         // building the select query
-        $SHOW_SELECT_QUERY = "SELECT FT_Show.SHOW_ID, FT_Director.Director_Name, Year_Released, Date_Added, FT_Rating.Rating_Type, FT_ShowType.Type_Name, FT_Show.Description 
+        $SHOW_SELECT_QUERY = "SELECT FT_Show.SHOW_ID, FT_Director.Director_Name, Year_Released, Date_Added, FT_Rating.Rating_Type, FT_ShowType.Type_Name, FT_Show.Description, FT_Show.poster_url, FT_Show.banner_url
                             FROM FT_Show 
                             LEFT JOIN FT_Director ON FT_Show.DIRECTOR_ID = FT_Director.DIRECTOR_ID 
                             LEFT JOIN FT_Rating ON FT_Show.RATING_ID = FT_Rating.RATING_ID 
-                            LEFT JOIN FT_ShowType ON FT_Show.SHOWTYPE_ID = FT_ShowType.SHOWTYPE_ID 
+                            LEFT JOIN FT_ShowType ON FT_Show.SHOWTYPE_ID = FT_ShowType.SHOWTYPE_ID
                             WHERE SHOW_ID = {$showid}";
         
         $CAST_SELECT_QUERY = "SELECT FT_Actor.Actor_Name FROM FT_ShowCast LEFT JOIN FT_Actor ON FT_ShowCast.ACTOR_ID = FT_Actor.ACTOR_ID WHERE SHOW_ID = {$showid}";
@@ -48,6 +48,8 @@
             $show['Rating'] = $row['Rating_Type'];
             //$show['Country'] = $row['Country_Name'];
             $show['Description'] = $row['Description'];
+            $show['poster_url'] = $row['poster_url'];
+            $show['banner_url'] = $row['banner_url'];
 
             $fetched_actors = select_query($conn, $CAST_SELECT_QUERY);
             $fetched_countries = select_query($conn, $COUNTRY_SELECT_QUERY);
@@ -59,17 +61,17 @@
                 
                 // loop and add the actors to the array
                 while($actor = $fetched_actors->fetch_assoc()) {
-                    array_push($show['cast'], $actor['Actor_Name']);
+                    array_push($show['Cast'], $actor['Actor_Name']);
                 }
 
             }
-
+            
             $show['Country'] = array();
             if($fetched_countries->num_rows > 0) {
 
                 // loop and add the countries to the array
                 while($country = $fetched_countries->fetch_assoc()) {
-                    array_push($show['country'], $country['Country_Name']);
+                    array_push($show['Country'], $country['Country_Name']);
                 }
             }
 
@@ -78,7 +80,7 @@
 
                 // loop and add the genres to the array
                 while($genre = $fetched_genres->fetch_assoc()) {
-                    array_push($show['genre'], $genre['Genre_Name']);
+                    array_push($show['Genre'], $genre['Genre_Name']);
                 }
             }
 
@@ -218,7 +220,9 @@
             
             $show = array();
             // check if the show exists
-            $show_keys = array("title", "type", "director", "cast", "country", "date_added", "release_year", "rating", "duration", "listed_in", "description");
+            $show_keys = array("title", "type", "director", "cast", "country", "date_added", "release_year", "rating", "duration", "listed_in", "description", "poster_url", "banner_url");
+            
+            array_walk($put_vars, 'trim_value');
             
             // check if the key exists in put variables
             foreach($show_keys as $key) {
@@ -230,20 +234,24 @@
 
 
             // clean the data
-            array_walk($put_vars, 'trim_value');
+            array_walk($show, 'trim_value');
 
             // sanitise the data
-            array_walk($put_vars, 'real_escape_string');
+            array_walk($show, 'real_escape_string');
 
             // check if the show exists
             $CHECK_SHOW_QUERY = "SELECT SHOW_ID FROM FT_Show WHERE SHOW_ID = {$show['showid']}";
 
             $show_id = select_query($conn, $CHECK_SHOW_QUERY);
 
-            if($show->num_rows = 0) {
+            if($show->num_rows == 0) {
                 echo json_encode(array("status" => "Error", "message" => "Show not found!"));
             } else {
-                // now that show is found check if the column exists in the table
+                foreach($show_keys as $key) {
+                    if(array_key_exists($key, $put_vars)) {
+                        
+                    }
+                }
 
             }
 
