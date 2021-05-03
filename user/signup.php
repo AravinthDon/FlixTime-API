@@ -35,12 +35,12 @@
         if(!isset($_POST['password']) && !isset($_POST['username'])) {
             echo json_encode(array("status" => "Error", "message" => "Username and Password not provided"));
         } elseif( !isset($_POST['password']) | !isset($_POST['username']) ) {
+            // Respond with appropriate error messages
             if(!isset($_POST['username'])) {
                 echo json_encode(array("status" => "Error", "message" => "Username not provided"));
             } elseif(!isset($_POST['password'])) {
                 echo json_encode(array("status" => "Error", "message" => "Passowrd not provided"));
             }
-        
         } else {
     
             // include files
@@ -88,14 +88,7 @@
                 }
  
             }
+        }
     }
-    
-
-    
-    }
-    
-
-
-
 
 ?>
