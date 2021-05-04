@@ -75,7 +75,7 @@
 
         $temp_results = array(); // temp array
         $results["Movies"] = $movie_results;
-        $results["TV Shows"] = $tvshow_results;
+        $results["TV_Shows"] = $tvshow_results;
         // push the results array
         //array_push($results, $temp_results);
         echo json_encode(array("results" => $results));
