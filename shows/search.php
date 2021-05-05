@@ -3,6 +3,7 @@
     // to make the content type json
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET');
+    header('Access-Control-Allow-Origin: *');
 
     // include the database config
     include("../config/database.php");

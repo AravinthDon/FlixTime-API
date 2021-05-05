@@ -2,7 +2,7 @@
     // to make the content type json
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: GET POST PUT');
-
+    header('Access-Control-Allow-Origin: *');
     // include the database config
     include("../config/database.php");
     // include the show utilities function
@@ -43,14 +43,14 @@
             // create the json data
             $show['ShowID'] = $row['SHOW_ID'];
             $show['Director'] = $row['Director_Name'];
-            $show['Year Released'] = $row['Year_Released'];
-            $show['Date Added'] = $row['Date_Added'];
+            $show['YearReleased'] = $row['Year_Released'];
+            $show['DateAdded'] = $row['Date_Added'];
             $show['Rating'] = $row['Rating_Type'];
             //$show['Country'] = $row['Country_Name'];
             $show['Description'] = $row['Description'];
             $show['poster_url'] = $row['poster_url'];
             $show['banner_url'] = $row['banner_url'];
-
+            $show['type'] = $row['Type_Name'];
             $fetched_actors = select_query($conn, $CAST_SELECT_QUERY);
             $fetched_countries = select_query($conn, $COUNTRY_SELECT_QUERY);
             $fetched_genres = select_query($conn, $GENRE_SELECT_QUERY);
@@ -90,7 +90,7 @@
 
                 if($tvshow->num_rows > 0) {
                     $tvshow = $tvshow->fetch_assoc();
-                    $show['Title'] = $tvshow['TVShow_name'];
+                    $show['Title'] = $tvshow['TVShow_Name'];
                     $show['Seasons'] = $tvshow['Seasons'];
                 }
             } else if ($row['Type_Name'] == "Movie") {
