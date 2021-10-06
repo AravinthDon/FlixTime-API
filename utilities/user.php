@@ -36,7 +36,7 @@
         if($fetched_shows->num_rows > 0) {
             // fetch the data and add it to the results  
             while($show = $fetched_shows -> fetch_assoc()) {
-                array_push($shows, $show['SHOW_ID']);
+                array_push($shows, array("ShowID" => $show['SHOW_ID']));
             }
         }
 
@@ -76,4 +76,16 @@
 
     }
     
+    function isWatchlist($conn, $user_id, $show_id) {
+        $SHOW_SEARCH_QUERY = "SELECT WATCHLIST_ID FROM FT_Watchlist WHERE SHOW_ID = $show_id AND USER_ID = $user_id";
+
+        $result = select_query($conn, $SHOW_SEARCH_QUERY);
+
+        if($result->num_rows>0) {
+            $row = $result->fetch_assoc();
+            return $row['WATCHLIST_ID'];
+        } else {
+            return false;
+        }
+    }
 ?>

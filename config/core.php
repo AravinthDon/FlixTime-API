@@ -3,9 +3,6 @@
 
     $HOME_URL =  "http://". $_SERVER['SERVER_NAME']. "flixtime/api/";
 
-    // Add the encryption key for Basic Authentication
-    $SECRET_KEY = "SLKDFJAL;L;288RUF;ASL6G";
-
     // Implementing log feature in future versions
     //$LOG_DIRECTORY = "";
 

@@ -205,58 +205,5 @@
             echo json_encode(array("status" => "Success", "ShowID" => $show_id));
         }
     }
-
-    if($_SERVER['REQUEST_METHOD'] == "PUT") {
-        
-        // parse the input parameters into an array
-        parse_str(file_get_contents("php://input"),$put_vars);
-
-        
-        if(!empty($put_vars)) {
-            // print_r($put_vars);
-            // if(isset($put_vars["showid"])) {
-            //     echo json_encode(array("showid" => $put_vars));
-            // }
-            
-            $show = array();
-            // check if the show exists
-            $show_keys = array("title", "type", "director", "cast", "country", "date_added", "release_year", "rating", "duration", "listed_in", "description", "poster_url", "banner_url");
-            
-            array_walk($put_vars, 'trim_value');
-            
-            // check if the key exists in put variables
-            foreach($show_keys as $key) {
-                if (array_key_exists($key, $put_vars)) {
-                    $show[$key] = $put_vars[$key];
-                    
-                }
-            }
-
-
-            // clean the data
-            array_walk($show, 'trim_value');
-
-            // sanitise the data
-            array_walk($show, 'real_escape_string');
-
-            // check if the show exists
-            $CHECK_SHOW_QUERY = "SELECT SHOW_ID FROM FT_Show WHERE SHOW_ID = {$show['showid']}";
-
-            $show_id = select_query($conn, $CHECK_SHOW_QUERY);
-
-            if($show->num_rows == 0) {
-                echo json_encode(array("status" => "Error", "message" => "Show not found!"));
-            } else {
-                foreach($show_keys as $key) {
-                    if(array_key_exists($key, $put_vars)) {
-                        
-                    }
-                }
-
-            }
-
-        }
- 
-    }
     
 ?>

@@ -31,7 +31,6 @@
         
     }
 
-
     function select_query($conn, $selectquery) {
 
         $result = $conn->query($selectquery);
@@ -88,7 +87,5 @@
                 return $row[$id];
             }
         }
-
-
     }
 ?>

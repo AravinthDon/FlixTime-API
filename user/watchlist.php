@@ -13,9 +13,20 @@
         if(isset($_GET['user_id']) && isset($_GET['api_key'])){
             if(is_credentials_valid($conn, $_GET['user_id'], $_GET['api_key'])) {
                 // fetch the user watchlist
-                $shows = get_user_watchlist($conn, $_GET['user_id']);
-                // respond with the data
-                echo json_encode(array("status" => "Success", "data" => $shows));
+
+                if(isset($_GET['show_id'])) {
+                    if(($watchlist_id = isWatchlist($conn, $_GET['user_id'], $_GET['show_id'])) != null){
+                        echo json_encode(array("status" => "Found", "watchlistid" => $watchlist_id));
+                    } else {
+                        echo json_encode(array("status" => "Nope", "watchlistid" => null));
+                    }
+                } else {
+                    $shows = get_user_watchlist($conn, $_GET['user_id']);
+                    
+                    // respond with the data
+                    echo json_encode(array("status" => "Success", "data" => $shows));
+                }
+                
             } else {
                 header("HTTP/1.0 401 Unauthorized");
                 echo json_encode(array("status" => "Error", "message" => "Invalid User"));
@@ -24,6 +35,7 @@
             header("HTTP/1.0 401 Unauthorized");
             echo json_encode(array("status" => "Error", "message" => "Missing User Credentials"));
         }
+
 
     } elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
         // check if the credentials are provided

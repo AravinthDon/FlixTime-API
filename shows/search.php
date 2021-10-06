@@ -7,12 +7,14 @@
 
     // include the database config
     include("../config/database.php");
-    include("../utilities/db.php");
+    //include("../utilities/db.php");
+    include("../utilities/show.php");
+
     /**
      * returns the show_id if the show is available
      * else returns NULL
      */
-    function search_show($shows, $show_title, $show_type) {
+    function search_show($conn, $shows, $show_title, $show_type) {
 
         // array to store the matched shows
         $matched_shows = array();
@@ -40,7 +42,10 @@
                 // Check if the title has the term show_title in it
                 if(strstr(strtoupper($title), strtoupper($show_title))) {
                     //echo($title);
-                    array_push($matched_shows, array("Title" => $title, "URL" => $SHOW_URL. strval($row['SHOW_ID']), )); 
+                    $poster_url = '';
+                    $banner_url = '';
+                    get_urls($conn, $row['SHOW_ID'], $poster_url, $banner_url);
+                    array_push($matched_shows, array("Title" => $title, "ShowID" => $row['SHOW_ID'], "poster_url" => $poster_url,  "banner_url" => $banner_url )); 
                 }
             }
         }
@@ -67,12 +72,12 @@
         $movies = select_query($conn, $MOVIE_FETCH_QUERY);
         //echo $search_title;
         // search for the movie
-        $movie_results = search_show($movies, $search_title, "Movie");
+        $movie_results = search_show($conn, $movies, $search_title, "Movie");
 
         // get the tv shows
         $tvshows = select_query($conn, $TVSHOW_FETCH_QUERY);
         // search for the tv show
-        $tvshow_results = search_show($tvshows, $search_title, "TV Show");
+        $tvshow_results = search_show($conn, $tvshows, $search_title, "TV Show");
 
         $temp_results = array(); // temp array
         $results["Movies"] = $movie_results;

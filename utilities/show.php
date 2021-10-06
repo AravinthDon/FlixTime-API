@@ -98,8 +98,6 @@
             $description = mysqli_real_escape_string($conn, $show['description']);
         }
         
-        //print_r($show);
-
         // Add the Actor details if not exists
         if(!empty($show['cast'])) {
             $actor_ids = add_actor($conn, $show['cast']);
@@ -243,4 +241,19 @@
 
     // testing the poster function
     //find_poster("9", $poster_url, $banner_url);
+
+    /**
+     * gets the poster urls from the database
+     */
+    function get_urls($conn, $show_id, &$poster_url, &$banner_url){
+            
+        $URL_GET_QUERY = "SELECT poster_url, banner_url FROM FT_Show WHERE SHOW_ID = {$show_id}";
+        $url_res = select_query($conn, $URL_GET_QUERY);
+                    
+        if($url_res->num_rows > 0) {
+            $urls = $url_res->fetch_assoc();
+            $poster_url = $urls['poster_url'];
+            $banner_url = $urls['banner_url'];
+        }
+    }
 ?>
